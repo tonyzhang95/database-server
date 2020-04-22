@@ -1,6 +1,5 @@
 $(function() {
     $('#btnSignUp').click(function() {
-		console.log("signUp.js is triggered");
         $.ajax({
             url: '/signUp',
             data: $('form').serialize(),
@@ -10,7 +9,8 @@ $(function() {
             },
             error: function(error) {
                 console.log(error);
+                alert('Sign up failed.');
             }
-        });
+        })
     });
 });

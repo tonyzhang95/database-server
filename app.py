@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, json
+from flask import Flask, render_template, request, json, redirect, session
 from flaskext.mysql import MySQL
 from werkzeug import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 mysql = MySQL()
+
+app.secret_key = 'simple-server-database'
 
 # MySQL config
 app.config['MYSQL_DATABASE_USER'] = 'root'
@@ -18,14 +20,38 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/showLogIn')
-def showLogIn():
-    return render_template('login.html')
+@app.route('/showSignIn')
+def showSignIn():
+    return render_template('signin.html')
 
 
-@app.route('/LogIn')
-def logIn():
-    return 'Log in'
+@app.route('/validateLogIn', methods=['POST'])
+def validateLogIn():
+    try:
+        _username = request.form['inputEmail']
+        _password = request.form['inputPassword']
+
+        # connect to MySQL
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.callproc('sp_validateLogin',(_username,)) # check if user email is stored in the user table in DB with sp_validateLogin procedure.
+        data = cursor.fetchall()
+
+        if len(data) > 0:
+            print(str(data[0]))
+            if check_password_hash(str(data[0][3]),_password):
+                session['user'] = data[0][1]
+                return redirect('/userHome')
+            else:
+                return render_template('error.html',error = 'Wrong Email address or Password.')
+        else:
+            return render_template('error.html',error = 'Wrong Email address or Password.')
+
+    except Exception as e:
+        return render_template('error.html',error = str(e))
+    finally:
+        cursor.close()
+        conn.close()
 
 
 @app.route('/showSignUp')
@@ -55,6 +81,7 @@ def signUp():
 
             if len(data) is 0:
                 conn.commit()
+                print('------created user: ',_name,_email,_password)
                 return json.dumps({'message':'User created successfully !'})
             else:
                 return json.dumps({'error':str(data[0])})
@@ -66,6 +93,25 @@ def signUp():
     finally:
         cursor.close()
         conn.close()
+
+@app.route('/success')
+def success():
+    return render_template('success.html')
+
+
+@app.route('/userHome')
+def userHome():
+    if session.get('user'):
+        return render_template('userHome.html')
+    else:
+        return render_template('error.html',error = 'Unauthorized User')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user', None)
+    return redirect('/')
+
 
 @app.route('/todos')
 def todo():
