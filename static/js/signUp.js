@@ -1,6 +1,6 @@
 $(function() {
     $('#btnSignUp').click(function() {
-		console.log("This is working so far");
+		console.log("signUp.js is triggered");
         $.ajax({
             url: '/signUp',
             data: $('form').serialize(),
