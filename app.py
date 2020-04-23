@@ -17,7 +17,10 @@ mysql.init_app(app)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    if session.get('user'):
+        return redirect('/userHome')
+    else:
+        return render_template('index.html')
 
 
 @app.route('/showSignIn')
@@ -82,21 +85,17 @@ def signUp():
             if len(data) is 0:
                 conn.commit()
                 print('------created user: ',_name,_email,_password)
-                return json.dumps({'message':'User created successfully !'})
+                cursor.close()
+                conn.close()
+                return json.dumps({'message':'User created!'})
             else:
-                return json.dumps({'error':str(data[0])})
+                return json.dumps({'message':'Email existed, please sign in or try with another email.'})
         else:
-            return json.dumps({'html':'<span>Enter the required fields</span>'})
+            return json.dumps({'message':'<span>Enter the required fields</span>'})
 
     except Exception as e:
         return json.dumps({'error':str(e)})
-    finally:
-        cursor.close()
-        conn.close()
 
-@app.route('/success')
-def success():
-    return render_template('success.html')
 
 
 @app.route('/userHome')
