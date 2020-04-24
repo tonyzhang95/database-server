@@ -43,7 +43,7 @@ def validateLogIn():
         if len(data) > 0:
             print(str(data[0]))
             if check_password_hash(str(data[0][3]),_password):
-                session['user'] = data[0][1]
+                session['user'] = data[0][2]
                 return redirect('/userHome')
             else:
                 return render_template('error.html',error = 'Wrong Email address or Password.')
@@ -91,7 +91,7 @@ def signUp():
             else:
                 return json.dumps({'message':'Email existed, please sign in or try with another email.'})
         else:
-            return json.dumps({'message':'<span>Enter the required fields</span>'})
+            return json.dumps({'message':'Enter the required fields'})
 
     except Exception as e:
         return json.dumps({'error':str(e)})
@@ -101,9 +101,21 @@ def signUp():
 @app.route('/userHome')
 def userHome():
     if session.get('user'):
-        return render_template('userHome.html')
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        sql = 'SELECT * FROM WDS.user WHERE user_username = {}'.format('"' + str(session.get('user')) + '"')
+        cursor.execute(sql)
+        result = cursor.fetchall()
+
+        return render_template('userHome.html', user_info = str(result), user_insurance = 'car insurance 001')
     else:
-        return render_template('error.html',error = 'Unauthorized User')
+        return render_template('error.html', error = 'Unauthorized User')
+
+
+@app.route('/product')
+def product():
+    return render_template('product.html')
 
 
 @app.route('/logout')

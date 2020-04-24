@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+
+<link href="/static/css/pricing.css" rel="stylesheet">
+
+
+    <p>Products of WDS insurances</p>
+    <div class="container">
+      <div class="card-deck mb-3 text-center">
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Car Insurance</h4>
+          </div>
+          <div class="card-body">
+            <h1 class="card-title pricing-card-title">Starting at $10 <small class="text-muted">/ mo</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+              <li>24/7 Service center</li>
+              <li>Roadside assistance</li>
+              <li>Emergency repair</li>
+              <li>Free carfax report</li>
+            </ul>
+            <button type="button" class="btn btn-lg btn-block btn-primary" id='car-ins-button'>Buy</button>
+          </div>
+        </div>
+        <div class="card mb-4 shadow-sm">
+          <div class="card-header">
+            <h4 class="my-0 font-weight-normal">Home Insurance</h4>
+          </div>
+          <div class="card-body">
+            <h1 class="card-title pricing-card-title">Starting at $200 <small class="text-muted">/ year</small></h1>
+            <ul class="list-unstyled mt-3 mb-4">
+              <li>For all types of homes: house, apartment, or condo</li>
+              <li>Lower price match</li>
+              <li>Priority call support</li>
+              <li>Help center access</li>
+            </ul>
+            <button type="button" class="btn btn-lg btn-block btn-primary" id='home-ins-button'>Buy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p><center>All rights reserved WDS</center></p>
+
+{% endblock %}

@@ -1,9 +1,19 @@
 {% extends "base.html" %}
-{% block page_title %}We Do Secure Insurance {% endblock %}
+{% block page_title %} We Do Secure Insurance {% endblock %}
 
 {% block content %}
     <p> Welcome to your homepage!</p>
+
     <p> You are currently signed in as: {{session.user}} </p>
+
+    <p> <a href="/product">Browse</a> and buy insurances.</p>
+
+    <p> Your information: {{ user_info }} </p>
+
+    <p> Your insurances: {{ user_insurance }} </p>
+
+
+
     <p> You can <a href="/logout">log out</a> from here. </p>
 
 
