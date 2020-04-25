@@ -165,10 +165,10 @@ def processUserInfo():
 # interface for user info edit
 @app.route('/userInfo')
 def userInfo():
-    # if session.get('user'):
-    return render_template('userinfo.html')
-    # else:
-    #     return render_template('error.html', error = 'You need to log-in to access this page.')
+    if session.get('user'):
+        return render_template('userinfo.html')
+    else:
+        return render_template('error.html', error = 'You need to log-in to access this page.')
 
 
 # display products and pricing
