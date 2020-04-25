@@ -112,15 +112,20 @@ def userHome():
     if session.get('user'):
         conn = mysql.connect()
         cursor = conn.cursor()
-
-        sql = 'SELECT * FROM WDS.user WHERE user_username = {}'.format('"' + str(session.get('user')) + '"')
+        sql = 'SELECT * FROM WDS.user join WDS.customer on user.user_id=customer.user_id WHERE user_username = {}'.format('"' + str(session.get('user')) + '"')
         cursor.execute(sql)
         result = cursor.fetchall()
+        if not result:
+            cursor.execute('select * from wds.user where user_username = {}'.format('"' + str(session.get('user')) + '"'))
+            result = cursor.fetchall()
         conn.commit()
         cursor.close()
         conn.close()
-        print(result[0][:-1])
-        user_account = 'User name: ' + result[0][1] + "          Accunt/Email: " + result[0][2]
+        print(result)
+        if len(result[0]) < 10:
+            user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2])
+        else:
+            user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2]) + "\n" + "Fullname: " + str(result[0][5]) + str(result[0][6]) + "\n" + "Gender: " + str(result[0][7]) + "\n" + "Maritality: " + str(result[0][8]) + "\n" + "Insurance type: " + str(result[0][9]) + "\n"+ "Address: " + str(result[0][10]) + ", " + str(result[0][11]) + ", " + str(result[0][12]) + ", " + str(result[0][13]) + ", " + str(result[0][14])
 
         return render_template('userHome.html', user_info = user_account, user_insurance = 'car insurance 001')
     else:
