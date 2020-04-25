@@ -119,7 +119,7 @@ def userHome():
         # conn.commit()
         cursor.close()
         conn.close()
-        
+
         print(result)
 
         if len(result[0]) < 10:
