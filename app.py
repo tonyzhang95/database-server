@@ -14,7 +14,6 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'Supern0va'
 app.config['MYSQL_DATABASE_DB'] = 'WDS'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
-userid = 0
 
 @app.route('/')
 def index():
@@ -45,8 +44,6 @@ def validateLogIn():
             print(str(data[0]))
             if check_password_hash(str(data[0][3]),_password):
                 session['user'] = data[0][2]
-                userid = data[0][0]
-                print(userid)
                 return redirect('/userHome')
             else:
                 return render_template('error.html',error = 'Wrong Email address or Password.')
