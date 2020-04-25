@@ -1,17 +1,19 @@
 $(function() {
-    $('#btnSignUp').click(function() {
+    $('#btnSave').click(function() {
+        console.log($('#user_info_form').serialize());
+
+
         $.ajax({
-            url: '/signUp',
-            data: $('form').serialize(),
+            url: '/processUserInfo?' + $('#user_info_form').serialize(),
+            data: $('#user_info_form').serialize(),
             type: 'POST',
             dataType: 'json',
             success: function (result, status, xhr) {
                 console.log(result);
                 $("#result").html(result.response);
-                if (result.response == "user") window.location.href='/userInfo'
                 },
             error: function (xhr, status, error) {
-                $("#result").html("Error: " + xhr.responseText)
+                $("#result").html(xhr.responseText)
                 }
         })
     });
