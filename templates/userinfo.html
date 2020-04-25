@@ -6,20 +6,20 @@
     <body>
         <h1 class="h3 mb-3 font-weight-normal">Please enter your information:</h1>
 
-        <form class="form-group">
-            
+        <form id="user_info_form">
+
             <div class="row">
                 <div class="col">First Name
-                  <input type="text" class="form-control" name="cFirstname" id="cFirstname">
+                  <input type="text" class="form-control" name="firstname" id="firstname">
                 </div>
                 <div class="col">Last Name
-                  <input type="text" class="form-control" name="cLirstname" id="cLirstname">
+                  <input type="text" class="form-control" name="lastname" id="lastname">
                 </div>
             </div>
 
             <div>
-                <label for="cGender">Gender</label>
-                <select class="form-control" name="cGender" id="cGender">
+                <label for="gender">Gender</label>
+                <select class="form-control" name="gender" id="gender">
                   <option value="M">Male</option>
                   <option value="F">Female</option>
                   <option value="NULL">Perfer Not To Answer</option>
@@ -27,8 +27,8 @@
             </div>
 
             <div>
-                <label for="cMaritality">Marital Status</label>
-                <select class="form-control" name="cMaritality" id="cMaritality">
+                <label for="maritality">Marital Status</label>
+                <select class="form-control" name="maritality" id="maritality">
                   <option value="S">Single</option>
                   <option value="M">Married</option>
                   <option value="W">Widow</option>
@@ -36,33 +36,41 @@
             </div>
 
             <div>
-                <label for="cInstype">Insurance Type</label>
-                <select class="form-control" name="cInstype" id="cInstype">
+                <label for="instype">Insurance Type</label>
+                <select class="form-control" name="instype" id="instype">
                   <option value="A">For my car</option>
                   <option value="H">For my home</option>
                   <option value="B">For my car and my home</option>
                 </select>
             </div>
 
+            <div class="row">
+                <div class="col">House Number
+                  <input type="text" class="form-control" name="house" id="house">
+                </div>
+                <div class="col">Street
+                  <input type="text" class="form-control" name="street" id="street">
+                </div>
+            </div>
+
             <div class="form-row">
               <div class="form-group col-md-6">
-                <label for="cCity">City</label>
-                <input type="text" class="form-control" name="cCity" id="cCity">
+                <label for="city">City</label>
+                <input type="text" class="form-control" name="city" id="city">
               </div>
               <div class="form-group col-md-4">
                 <label for="cState">State</label>
-                <input type="text" class="form-control" name="cState" id="cState">
+                <input type="text" class="form-control" name="state" id="state">
               </div>
               <div class="form-group col-md-2">
-                <label for="cZipcode">Zip</label>
-                <input type="text" class="form-control" name="cZipcode" id="cZipcode">
+                <label for="zipcode">Zip</label>
+                <input type="text" class="form-control" name="zipcode" id="zipcode">
               </div>
             </div>
 
             <button id="btnSave" class="btn btn-lg btn-primary btn-block" type="button">Save</button>
 
             <h1><div id="result"></div></h1>
-
 
         </form>
 

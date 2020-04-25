@@ -131,24 +131,21 @@ http://0.0.0.0:5000/processUserInfo?firstname=david&lastname=beckham&gender=M&ma
 @app.route('/processUserInfo', methods = ['POST'])
 def processUserInfo():
     try:
-        print("------", request.url)
-        firstname = request.form['cFirstname']
+        # print("url:", request.url)
+        # print("form:", request.form)
 
-        lastname = request.form['cLastname']
-        print('++++++')
-        gender = request.form['cGender']
-        print('++++++')
-        maritality = request.form['cMaritality']
-        instype = request.form['cInstype']
-        house = request.form['cHouse']
-        street = request.form['cStreet']
-        city = request.form['cCity']
-        state = request.form['cState']
-        zipcode = request.form['cZipcode']
-
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        gender = request.form['gender']
+        maritality = request.form['maritality']
+        instype = request.form['instype']
+        house = request.form['house']
+        street = request.form['street']
+        city = request.form['city']
+        state = request.form['state']
+        zipcode = request.form['zipcode']
 
         print(firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode)
-
 
         if firstname and lastname and gender and maritality and instype and house and street and city and state and zipcode: # check all fields filled
 
@@ -157,9 +154,7 @@ def processUserInfo():
             # sql = 'INSERT INTO WDS.customer (cfirstname, clastname, cgender, cmaritality, cinstype, chouse, cstreet, ccity, cstate, czipcode) VALUES ("' + '","'.join([firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode]) + '"'
             # cursor.execute(sql)
             # data = cursor.fetchall()
-
-            if len(data) == 0:
-                return "Successfully entered this record to the database." + " ".join([firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode])
+            return "Successfully entered this record to the database."
         else:
             return "Error: must fill all fields."
     except Exception as e:
@@ -170,10 +165,10 @@ def processUserInfo():
 # interface for user info edit
 @app.route('/userInfo')
 def userInfo():
-    if session.get('user'):
-        return render_template('userinfo.html')
-    else:
-        return render_template('error.html', error = 'You need to log-in to access this page.')
+    # if session.get('user'):
+    return render_template('userinfo.html')
+    # else:
+    #     return render_template('error.html', error = 'You need to log-in to access this page.')
 
 
 # display products and pricing
