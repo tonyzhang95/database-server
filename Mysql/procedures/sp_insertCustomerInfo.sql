@@ -20,7 +20,7 @@ BEGIN
         insert into customer(cfirstname, clastname, cgender, cmaritality, cinstype, chouse, cstreet, ccity,
 						cstate, czipcode, user_id) 
 		values (p_cfirstname, p_clastname, p_cgender, p_cmaritality, p_cinstype,
-                        p_chouse, p_cstreet, p_ccity, p_cstate, p_czipcode, 1);
+                        p_chouse, p_cstreet, p_ccity, p_cstate, p_czipcode, @temp_id);
      
     END IF;
 END$$
