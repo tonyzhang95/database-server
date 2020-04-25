@@ -5,33 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>We Do Secure Insurance</title>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
 
     <script src="../static/js/jquery-3.1.1.min.js"></script>
     <script src="../static/js/signUp.js"></script>
-
+    <script src="../static/js/userInfo.js"></script>
 
 
 </head>
 
 <body>
-  <nav class="navbar navbar-inverse" role="navigation">
-    <div class="container-fluid">
-      <div class="navbar-header">
-          <a class="navbar-brand" href="/">WDS</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="/">WDS</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-item nav-link" href="/userHome">Home</a>
+          <a class="nav-item nav-link" href="/showSignIn">Sign In</a>
+          <a class="nav-item nav-link" href="/showSignUp">Sign Up</a>
+          <a class="nav-item nav-link" href="/product">Products</a>
+          <a class="nav-item nav-link" href="/todos">To-do List</a>
+          <a class="nav-item nav-link" href="/about">Documentation</a>
+        </div>
       </div>
-      <div>
-          <ul class="nav navbar-nav">
-            <li><a href="/showSignIn">Sign In</a></li>
-            <li><a href="/showSignUp">Sign Up</a></li>
-            <li><a href="/userHome">User Home</a></li>
-            <li><a href="/product">Products</a></li>
-            <li><a href="/todos">To-do List</a></li>
-            <li><a href="/about">Documentation</a></li>
-          </ul>
-      </div>
-    </div>
-  </nav>
+    </nav>
+
     <div class="container">
       <h1>{% block page_title %}{% endblock %}</h1>
       <div id="content" style="margin-top:2em">{% block content %}{% endblock %}</div>
@@ -40,6 +41,7 @@
 </body>
 
   <footer class='footer'>
+    <p class="mt-5 mb-3 text-muted"><center>&copy; WDS 2020</center></p>
   </footer>
 
 </html>
