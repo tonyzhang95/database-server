@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, json, redirect, session, url_for
 from flaskext.mysql import MySQL
-from werkzeug import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
@@ -14,7 +14,7 @@ app.config['MYSQL_DATABASE_PASSWORD'] = 'Supern0va'
 app.config['MYSQL_DATABASE_DB'] = 'WDS'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
-
+userid = 0
 
 @app.route('/')
 def index():
@@ -45,6 +45,8 @@ def validateLogIn():
             print(str(data[0]))
             if check_password_hash(str(data[0][3]),_password):
                 session['user'] = data[0][2]
+                userid = data[0][0]
+                print(userid)
                 return redirect('/userHome')
             else:
                 return render_template('error.html',error = 'Wrong Email address or Password.')
@@ -114,6 +116,9 @@ def userHome():
         sql = 'SELECT * FROM WDS.user WHERE user_username = {}'.format('"' + str(session.get('user')) + '"')
         cursor.execute(sql)
         result = cursor.fetchall()
+        conn.commit()
+        cursor.close()
+        conn.close()
         print(result[0][:-1])
         user_account = 'User name: ' + result[0][1] + "          Accunt/Email: " + result[0][2]
 
@@ -144,16 +149,18 @@ def processUserInfo():
         city = request.form['city']
         state = request.form['state']
         zipcode = request.form['zipcode']
+        username = session['user']
 
-        print(firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode)
+        print(firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode,username)
 
         if firstname and lastname and gender and maritality and instype and house and street and city and state and zipcode: # check all fields filled
 
-            # conn = mysql.connect()
-            # cursor = conn.cursor()
-            # sql = 'INSERT INTO WDS.customer (cfirstname, clastname, cgender, cmaritality, cinstype, chouse, cstreet, ccity, cstate, czipcode) VALUES ("' + '","'.join([firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode]) + '"'
-            # cursor.execute(sql)
-            # data = cursor.fetchall()
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.callproc('sp_insertCustomerInfo', (firstname,lastname,gender,maritality,instype,house,street,city,state,zipcode,username))
+            conn.commit()
+            cursor.close()
+            conn.close()
             return "Successfully entered this record to the database."
         else:
             return "Error: must fill all fields."
