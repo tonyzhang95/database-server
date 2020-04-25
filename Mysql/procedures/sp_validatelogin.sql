@@ -1,3 +1,5 @@
+drop procedure sp_validatelogin;
+
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_validatelogin`(
  IN p_username VARCHAR(45)
