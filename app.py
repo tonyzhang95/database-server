@@ -162,11 +162,11 @@ def processUserInfo():
         print(firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode,username)
 
         if firstname and lastname and gender and maritality and instype and house and street and city and state and zipcode: # check all fields filled
-            if gender == "NULL":
+            if gender == "U":
                 gender = ""
             conn = mysql.connect()
             cursor = conn.cursor()
-            cursor.callproc('sp_insertCustomerInfo', (firstname,lastname,gender,maritality,instype,house,street,city,state,zipcode,username))
+            cursor.callproc('sp_insertCustomerInfo', (firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode, username))
             conn.commit()
             cursor.close()
             conn.close()
