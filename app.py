@@ -108,6 +108,9 @@ def signUp():
 @app.route('/userHome')
 def userHome():
     if session.get('user'):
+
+        print("user: ", session.get('user'))
+
         conn = mysql.connect()
         cursor = conn.cursor()
         sql = 'SELECT * FROM WDS.user join WDS.customer on user.user_id=customer.user_id WHERE user_username = {}'.format('"' + str(session.get('user')) + '"')
@@ -120,7 +123,7 @@ def userHome():
         cursor.close()
         conn.close()
 
-        print(result)
+        print("result:  ", str(result))
 
         if len(result[0]) < 10:
             user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2])
@@ -166,7 +169,7 @@ def processUserInfo():
             conn.commit()
             cursor.close()
             conn.close()
-            return "Successfully entered this record to the database."
+            return json.dumps({'response': "success"})
         else:
             return "Error: must fill all fields."
     except Exception as e:
