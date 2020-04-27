@@ -1,14 +1,14 @@
 $(function() {
-    $('#btnSave').click(function() {
+    $('#btnHomeInsSubmit').click(function() {
         $.ajax({
-            url: '/processUserInfo?' + $('#user_info_form').serialize(),
-            data: $('#user_info_form').serialize(),
+            url: '/processHomeIns?' + $('#home_ins_form').serialize(),
+            data: $('#home_ins_form').serialize(),
             type: 'POST',
             dataType: 'json',
             success: function (result, status, xhr) {
                 console.log(result);
                 $("#result").html(result.response);
-                if (result.response == "success") window.location.href='/userHome'
+                // if (result.response == "success") window.location.href='/userHome'
                 },
             error: function (xhr, status, error) {
                 $("#result").html(xhr.responseText)

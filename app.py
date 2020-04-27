@@ -108,6 +108,9 @@ def signUp():
 @app.route('/userHome')
 def userHome():
     if session.get('user'):
+
+        print("user: ", session.get('user'))
+
         conn = mysql.connect()
         cursor = conn.cursor()
         sql = 'SELECT * FROM WDS.user join WDS.customer on user.user_id=customer.user_id WHERE user_username = {}'.format('"' + str(session.get('user')) + '"')
@@ -120,12 +123,12 @@ def userHome():
         cursor.close()
         conn.close()
 
-        print(result)
+        print("result:  ", str(result))
 
         if len(result[0]) < 10:
             user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2])
         else:
-            user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2]) + "\n" + "Fullname: " + str(result[0][5]) + str(result[0][6]) + "\n" + "Gender: " + str(result[0][7]) + "\n" + "Maritality: " + str(result[0][8]) + "\n" + "Insurance type: " + str(result[0][9]) + "\n"+ "Address: " + str(result[0][10]) + ", " + str(result[0][11]) + ", " + str(result[0][12]) + ", " + str(result[0][13]) + ", " + str(result[0][14])
+            user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2]) + "\n" + "Name: " + str(result[0][5]) + " " + str(result[0][6]) + "\n" + "Gender: " + str(result[0][7]) + "\n" + "Maritality: " + str(result[0][8]) + "\n" + "Insurance type: " + str(result[0][9]) + "\n"+ "Address: " + str(result[0][10]) + ", " + str(result[0][11]) + ", " + str(result[0][12]) + ", " + str(result[0][13]) + ", " + str(result[0][14])
 
         return render_template('userHome.html', user_info = user_account, user_insurance = 'car insurance 001')
     else:
@@ -159,15 +162,15 @@ def processUserInfo():
         print(firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode,username)
 
         if firstname and lastname and gender and maritality and instype and house and street and city and state and zipcode: # check all fields filled
-            if gender == "NULL":
+            if gender == "U":
                 gender = ""
             conn = mysql.connect()
             cursor = conn.cursor()
-            cursor.callproc('sp_insertCustomerInfo', (firstname,lastname,gender,maritality,instype,house,street,city,state,zipcode,username))
+            cursor.callproc('sp_insertCustomerInfo', (firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode, username))
             conn.commit()
             cursor.close()
             conn.close()
-            return "Successfully entered this record to the database."
+            return json.dumps({'response': "success"})
         else:
             return "Error: must fill all fields."
     except Exception as e:
@@ -188,6 +191,122 @@ def userInfo():
 @app.route('/product')
 def product():
     return render_template('product.html')
+
+
+# interface for car insurance information
+@app.route("/carIns")
+def carIns():
+    if session.get('user'):
+        return render_template('carIns.html')
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route("/processCarIns", methods=["POST"])
+def processCarIns():
+    try:
+        print("url:", request.url)
+        print("form:", request.form)
+
+        # insurance
+        start = request.form['insStartDate']
+        end = request.form['insEndDate']
+        premium = request.form['insPremium']
+        type = "A" # for auto
+
+        # car
+        vin = request.form['VIN']
+        make = request.form['make']
+        model = request.form['model']
+        year = request.form['year']
+        ownership = request.form['ownership']
+
+        #driver
+        firstname = request.form['driverFirstName']
+        lastname = request.form['driverLastName']
+        lisence = request.form['driverLisence']
+        birthdate = request.form['DOB']
+
+        # session user
+        username = session['user']
+
+        car_ins = [start, end, premium, vin, make, model, year, firstname, lastname, lisence, birthdate]
+        print(car_ins)
+
+        if start and end and premium and vin and make and model and year and firstname and lastname and lisence and birthdate: # check all fields filled
+
+            # check dates
+
+            # MySQL ops
+            # conn = mysql.connect()
+            # cursor = conn.cursor()
+            # cursor.callproc('sp_insertCustomerInfo', (firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode, username))
+            # conn.commit()
+            # cursor.close()
+            # conn.close()
+            return json.dumps({'response': "success {}".format(car_ins)})
+        else:
+            return "Error: must fill all fields."
+    except Exception as e:
+        print(str(e))
+        return str(e)
+
+
+# interface for car insurance information
+@app.route("/homeIns")
+def homeIns():
+    if session.get('user'):
+        return render_template('homeIns.html')
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route("/processHomeIns", methods=["POST"])
+def processHomeIns():
+    try:
+        print("url:", request.url)
+        print("form:", request.form)
+
+        # insurance
+        start = request.form['insStartDate']
+        end = request.form['insEndDate']
+        premium = request.form['insPremium']
+        type = "H" # for home
+
+        # home
+        date = request.form['date']
+        value = request.form['value']
+        area = request.form['area']
+        home_type = request.form['type']
+        fire = request.form['fire']
+        security = request.form['security']
+        pool = request.form['pool']
+        basement = request.form['basement']
+
+        # session user
+        username = session['user']
+
+        home_ins = [start, end, premium, date, value, area, home_type, fire, security, pool, basement]
+        print(home_ins)
+
+        if start and end and premium and date and value and area and home_type and fire and security and pool and basement: # check all fields filled
+
+            # check dates
+
+            # MySQL ops
+            # conn = mysql.connect()
+            # cursor = conn.cursor()
+            # cursor.callproc('sp_insertCustomerInfo', (firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode, username))
+            # conn.commit()
+            # cursor.close()
+            # conn.close()
+            return json.dumps({'response': "success {}".format(home_ins)})
+        else:
+            return "Error: must fill all fields."
+    except Exception as e:
+        print(str(e))
+        return str(e)
+
 
 
 # log out current user

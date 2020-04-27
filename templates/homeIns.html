@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block page_title %}We Do Secure Insurance {% endblock %}
+
+{% block content %}
+    <body>
+        <h1 class="h3 mb-3 font-weight-normal">Please enter all fields to complete your home insurance registration:</h1>
+        <p><small class="form-text text-muted">Please consult a WDS staff if you have any question.</small></p>
+
+        <form id="home_ins_form">
+
+            <p>About your insurance</p>
+
+            <div class="row">
+                <div class="col">Insurance Start Date
+                  <input type="date" class="form-control" name="insStartDate" id="insStartDate" placeholder="MM-DD-YYYY">
+                </div>
+                <div class="col">End Date
+                  <input type="date" class="form-control" name="insEndDate" id="insEndDate" placeholder="MM-DD-YYYY">
+                </div>
+            </div>
+
+            <label for="insPremium">Premium Amount</label>
+            <select class="form-control" name="insPremium" id="insPremium">
+              <option value=100>$ 100/year</option>
+              <option value=200>$ 200/year</option>
+            </select>
+
+            <p><br>About your home</p>
+
+            <div>
+                <label for="date">Home purchase/Apartment move-in date</label>
+                <input type="date" class="form-control" name="date" id="date" placeholder="MM-DD-YYYY">
+            </div>
+
+            <div class="row">
+                <div class="col">Value in USD
+                  <input type="number" class="form-control" name="value" id="value">
+                </div>
+                <div class="col">Area in sqft.
+                  <input type="number" class="form-control" name="area" id="area">
+                </div>
+            </div>
+
+            <div>
+                <label for="type">Type</label>
+                <select class="form-control" name="type" id="type">
+                  <option value="S">Single Family</option>
+                  <option value="M">Multi Family</option>
+                  <option value="C">Condo</option>
+                  <option value="T">Town House</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="fire">Fire Alarm System</label>
+                <select class="form-control" name="fire" id="fire">
+                  <option value="Y">Installed</option>
+                  <option value="N">Not Installed (Unknown)</option>
+                </select>
+            </div>
+            <div>
+                <label for="security">Security System</label>
+                <select class="form-control" name="security" id="security">
+                  <option value="Y">Installed</option>
+                  <option value="N">Not Installed</option>
+                </select>
+            </div>
+            <div>
+                <label for="pool">Swimming Pool</label>
+                <select class="form-control" name="pool" id="pool">
+                  <option value="N">No pool</option>
+                  <option value="U">Underground</option>
+                  <option value="O">Overground</option>
+                  <option value="I">Indoor</option>
+                  <option value="M">Multiple</option>
+                </select>
+            </div>
+            <div>
+                <label for="basement">Basement (Underground Structure)</label>
+                <select class="form-control" name="basement" id="basement">
+                  <option value="Y">Have basement</option>
+                  <option value="N">No basement</option>
+                </select><br>
+            </div>
+
+
+            <div><button id="btnHomeInsSubmit" class="btn btn-lg btn-primary btn-block" type="button">Submit</button></div>
+
+            <h1><div id="result"></div></h1>
+
+        </form>
+
+    </body>
+
+{% endblock %}
