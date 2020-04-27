@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block page_title %}We Do Secure Insurance {% endblock %}
+
+{% block content %}
+    <body>
+        <h1 class="h3 mb-3 font-weight-normal">Please enter all fields to complete your car insurance registration:</h1>
+        <p><small class="form-text text-muted">Please consult a WDS staff if you have any question.</small></p>
+
+        <form id="car_ins_form">
+
+            <p>About your insurance</p>
+
+            <div class="row">
+                <div class="col">Insurance Start Date
+                  <input type="date" class="form-control" name="insStartDate" id="insStartDate" placeholder="MM-DD-YYYY">
+                </div>
+                <div class="col">End Date
+                  <input type="date" class="form-control" name="insEndDate" id="insEndDate" placeholder="MM-DD-YYYY">
+                </div>
+            </div>
+
+            <label for="insPremium">Premium Amount</label>
+            <select class="form-control" name="insPremium" id="insPremium">
+              <option value=10>$ 10/mo</option>
+              <option value=20>$ 20/mo</option>
+            </select>
+
+            <p><br>About your car</p>
+
+            <div>
+                <label for="VIN">Vehicle Indentification Number</label>
+                <input type="text" class="form-control" name="VIN" id="VIN" aria-describedby="VINHelp" placeholder="VIN">
+                <small id="VINHelp" class="form-text text-muted">VIN can be found on your car registration with DMV.</small>
+            </div>
+
+
+            <div class="row">
+                <div class="col">Make
+                  <input type="text" class="form-control" name="make" id="make">
+                </div>
+                <div class="col">Model
+                  <input type="text" class="form-control" name="model" id="model">
+                </div>
+                <div class="col">Year
+                  <input type="text" class="form-control" name="year" id="year">
+                </div>
+            </div>
+
+            <div>
+                <label for="ownership">Ownership</label>
+                <select class="form-control" name="ownership" id="ownership">
+                  <option value="F">Financed</option>
+                  <option value="L">Leased</option>
+                  <option value="O">Owned</option>
+                </select>
+            </div>
+
+            <p><br>About the driver</p>
+
+            <div class="row">
+                <div class="col">First Name
+                  <input type="text" class="form-control" name="driverFirstName" id="driverFirstName">
+                </div>
+                <div class="col">Last Name
+                  <input type="text" class="form-control" name="driverLastName" id="driverLastName">
+                </div>
+            </div>
+
+            <div>Driver's Lisence
+              <input type="text" class="form-control" name="driverLisence" id="driverLisence"><br>
+            </div>
+
+            <div>Date of Birth
+              <input type="date" class="form-control" name="DOB" id="DOB"><br>
+            </div>
+
+
+            <div><button id="btnCarInsSubmit" class="btn btn-lg btn-primary btn-block" type="button">Submit</button></div>
+
+            <h1><div id="result"></div></h1>
+
+        </form>
+
+    </body>
+
+{% endblock %}
