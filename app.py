@@ -81,7 +81,7 @@ def signUp():
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             data = cursor.fetchall()
 
-            if len(data) is 0:
+            if len(data) == 0:
                 conn.commit()
                 cursor.close()
                 conn.close()
@@ -111,26 +111,53 @@ def userHome():
 
         print("user: ", session.get('user'))
 
+        cid = 0
+        auto_ins = []
+        home_ins = []
+
         conn = mysql.connect()
         cursor = conn.cursor()
-        sql = 'SELECT * FROM WDS.user join WDS.customer on user.user_id=customer.user_id WHERE user_username = {}'.format('"' + str(session.get('user')) + '"')
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        if not result:
+
+        # fetch user account info from mysql
+        cursor.execute('select * from wds.user join wds.customer on user.user_id=customer.user_id where user_username = {}'.format('"' + str(session.get('user')) + '"'))
+        account = cursor.fetchall()
+        if account:
+            cid = str(account[0][4])
+        else:
             cursor.execute('select * from wds.user where user_username = {}'.format('"' + str(session.get('user')) + '"'))
-            result = cursor.fetchall()
+            account = cursor.fetchall()
+
+        # fetch customer insurances info from mysql
+        if cid:
+            cursor.execute('select * from wds.insurance i join wds.auto_ins a on i.insid=a.insid where i.cid = {}'.format('"' + cid + '"'))
+            auto_ins = cursor.fetchall()
+            cursor.execute('select * from wds.insurance i join wds.home_ins h on i.insid=h.insid where i.cid = {}'.format('"' + cid + '"'))
+            home_ins = cursor.fetchall()
         # conn.commit()
         cursor.close()
         conn.close()
 
-        print("result:  ", str(result))
+        print("account:  ", str(account[0]))
+        if auto_ins:
+            print("auto_ins:  ", str(auto_ins))
+        if home_ins:
+            print("home_ins:  ", str(home_ins))
 
-        if len(result[0]) < 10:
-            user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2])
+        # display account info
+        if len(account[0]) < 10:
+            user_account = "Username: " + str(account[0][1]) + "\n" + "Accunt/Email: " + str(account[0][2])
         else:
-            user_account = "Username: " + str(result[0][1]) + "\n" + "Accunt/Email: " + str(result[0][2]) + "\n" + "Name: " + str(result[0][5]) + " " + str(result[0][6]) + "\n" + "Gender: " + str(result[0][7]) + "\n" + "Maritality: " + str(result[0][8]) + "\n" + "Insurance type: " + str(result[0][9]) + "\n"+ "Address: " + str(result[0][10]) + ", " + str(result[0][11]) + ", " + str(result[0][12]) + ", " + str(result[0][13]) + ", " + str(result[0][14])
+            user_account = "Username: " + str(account[0][1]) + "\n" + "Accunt/Email: " + str(account[0][2]) + "\n" + "Name: " + str(account[0][5]) + " " + str(account[0][6]) + "\n" + "Gender: " + str(account[0][7]) + "\n" + "Maritality: " + str(account[0][8]) + "\n" + "Insurance type: " + str(account[0][9]) + "\n"+ "Address: " + str(account[0][10]) + ", " + str(account[0][11]) + ", " + str(account[0][12]) + ", " + str(account[0][13]) + ", " + str(account[0][14])
 
-        return render_template('userHome.html', user_info = user_account, user_insurance = 'car insurance 001')
+        # display insurances info
+        insurances = ""
+        if auto_ins:
+            for i in auto_ins:
+                insurances += "Auto insurances info: " + str(i) + "\n"
+        if home_ins:
+            for j in home_ins:
+                insurances += "Home insurances info: " + str(j) + "\n"
+        return render_template('userHome.html', user_info = user_account, user_insurance = insurances)
     else:
         return render_template('error.html', error = 'Unauthorized Access')
 
@@ -233,17 +260,18 @@ def processCarIns():
         car_ins = [start, end, premium, vin, make, model, year, firstname, lastname, lisence, birthdate]
         print(car_ins)
 
-        if start and end and premium and vin and make and model and year and firstname and lastname and lisence and birthdate: # check all fields filled
+
+        if start and end and premium and vin and make and model and year and ownership and firstname and lastname and lisence and birthdate: # check all fields filled
 
             # check dates
 
             # MySQL ops
-            # conn = mysql.connect()
-            # cursor = conn.cursor()
-            # cursor.callproc('sp_insertCustomerInfo', (firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode, username))
-            # conn.commit()
-            # cursor.close()
-            # conn.close()
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.callproc('sp_insertCarIns', (start, end, premium, vin, make, model, year, ownership, firstname, lastname, lisence, birthdate, username))
+            conn.commit()
+            cursor.close()
+            conn.close()
             return json.dumps({'response': "success {}".format(car_ins)})
         else:
             return "Error: must fill all fields."
@@ -294,12 +322,12 @@ def processHomeIns():
             # check dates
 
             # MySQL ops
-            # conn = mysql.connect()
-            # cursor = conn.cursor()
-            # cursor.callproc('sp_insertCustomerInfo', (firstname, lastname, gender, maritality, instype, house, street, city, state, zipcode, username))
-            # conn.commit()
-            # cursor.close()
-            # conn.close()
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.callproc('sp_insertHomeIns', (start, end, premium, date, value, area, home_type, fire, security, pool, basement, username))
+            conn.commit()
+            cursor.close()
+            conn.close()
             return json.dumps({'response': "success {}".format(home_ins)})
         else:
             return "Error: must fill all fields."

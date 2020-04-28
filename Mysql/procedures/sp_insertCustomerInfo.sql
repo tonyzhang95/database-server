@@ -1,5 +1,4 @@
-drop procedure sp_insertCustomerInfo;
-delimiter $$
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_insertCustomerInfo`
 						(in p_cfirstname varchar(30), in p_clastname varchar(30), 
 						in p_cgender char(1), in p_cmaritality char(1), in p_cinstype char(1), 
