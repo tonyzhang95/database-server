@@ -9,18 +9,25 @@
     <p> You can retrieve customer insurances and make changes to them.</p>
 
     <form id="ins_retrieve_form">
-
         <div class="row">
-            <div class="col">Insurance Number
+            <div class="form-group col-md-4">Insurance Number
               <input type="number" class="form-control" name="ins_number" id="ins_number">
             </div>
         </div>
-
     </form>
-
     <button id="btnRetrieve" class="btn btn-sm btn-primary" type="submit">Retrieve</button>
 
-    <div id="retrieve_result"></div>
+    <div id="retrieve_result"></div><br>
+
+    <form id="ins_delete_form">
+        <div class="form-row">
+            <div class="form-group col-md-4">Insurance Number to delete
+              <input type="number" class="form-control" name="delete_number" id="delete_number">
+            </div>*Make sure to retrieve insurance and double check before delete it!
+        </div>
+    </form>
+    <button id="btnDelete" class="btn btn-sm btn-primary" type="submit">Delete</button>
+
     <div id="delete_result"></div>
 
     <p> You can <a href="/logout">log out</a> from here. </p>
