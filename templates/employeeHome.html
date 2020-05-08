@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block page_title %} We Do Secure Insurance {% endblock %}
+
+{% block content %}
+    <p> Welcome to employee homepage!</p>
+
+    <p> Currently signed in as: {{ session.user }} </p>
+
+    <p> You can retrieve customer insurances and make changes to them.</p>
+
+    <form id="ins_retrieve_form">
+
+        <div class="row">
+            <div class="col">Insurance Number
+              <input type="number" class="form-control" name="ins_number" id="ins_number">
+            </div>
+        </div>
+
+    </form>
+
+    <button id="btnRetrieve" class="btn btn-sm btn-primary" type="submit">Retrieve</button>
+
+    <div id="retrieve_result"></div>
+    <div id="delete_result"></div>
+
+    <p> You can <a href="/logout">log out</a> from here. </p>
+{% endblock %}

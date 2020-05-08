@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, json, redirect, session, url_for
+from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
@@ -21,7 +21,10 @@ print("-----Established Database Connection-----")
 @app.route('/')
 def index():
     if session.get('user'):
-        return redirect('/userHome')
+        if session.get('user').split("@")[1].lower() == "wds.com":
+            return redirect('/employeeHome')
+        else:
+            return redirect('/userHome')
     else:
         return render_template('index.html')
 
@@ -34,8 +37,8 @@ def showSignIn():
 @app.route('/validateLogIn', methods=['POST'])
 def validateLogIn():
     try:
-        print(request.url)
-        print(request.form)
+        # print(request.url)
+        # print(request.form)
 
         _username = request.form['inputEmail']
         _password = request.form['inputPassword']
@@ -49,8 +52,11 @@ def validateLogIn():
         if len(data) > 0:
             print(str(data[0]))
             if check_password_hash(str(data[0][3]),_password):
-                session['user'] = data[0][2]
-                return redirect('/userHome')
+                session['user'] = data[0][2] # log user into session
+                if session.get('user').split("@")[1].lower() == "wds.com": # redirect user and employee to their home page
+                    return redirect('/employeeHome')
+                else:
+                    return redirect('/userHome')
             else:
                 return render_template('error.html',error = 'Wrong Email address or Password.')
         else:
@@ -71,8 +77,8 @@ def showSignUp():
 @app.route('/signUp',methods=['POST','GET'])
 def signUp():
     try:
-        print(request.url)
-        print(request.args)
+        # print(request.url)
+        # print(request.args)
 
         _name = request.form['inputName']
         _email = request.form['inputEmail']
@@ -112,7 +118,7 @@ def signUp():
 
 @app.route('/userHome')
 def userHome():
-    if session.get('user'):
+    if session.get('user').split("@")[1].lower() != "wds.com":
 
         print("user: ", session.get('user'))
 
@@ -175,16 +181,28 @@ def userHome():
         # display insurances info
         insurances = []
         if auto_ins:
-            ins = auto_ins[0]
-            insurances.append("Car insurance no." + str(ins[0]) + " from " + str(ins[1].date()) + " to " + str(ins[2].date()) + " for $" + str(ins[3]) + ", for my " + str(ins[9]) + " " + str(ins[7]) + " " + str(ins[8]) + ", with primary driver: " + str(ins[11]) +" "+ str(ins[12]) + " with driver's lisence numbdered " + str(ins[13]) + " born on " + str(ins[14].date()))
+            for ins in auto_ins:
+                insurances.append("Car insurance no." + str(ins[0]) + " from " + str(ins[1].date()) + " to " + str(ins[2].date()) + " for $" + str(ins[3]) + ", for my " + str(ins[9]) + " " + str(ins[7]) + " " + str(ins[8]) + ", with primary driver: " + str(ins[11]) +" "+ str(ins[12]) + " with driver's lisence numbdered " + str(ins[13]) + " born on " + str(ins[14].date()))
 
         if home_ins:
-            ins = home_ins[0]
-            print(ins)
-            insurances.append("Home insurances no.{} from {} to {} for ${} for my {} squared feet, ${} home, which is purchased/moved-in on {} .".format(str(ins[0]),str(ins[1].date()),str(ins[2].date()),str(ins[3]),str(ins[8]),str(ins[7]),str(ins[6].date())))
+            for ins in home_ins:
+                insurances.append("Home insurances no.{} from {} to {} for ${} for my {} squared feet, ${} home, which is purchased/moved-in on {} .".format(str(ins[0]),str(ins[1].date()),str(ins[2].date()),str(ins[3]),str(ins[8]),str(ins[7]),str(ins[6].date())))
+                
         return render_template('userHome.html', user_info = user_info, user_insurance = insurances)
     else:
         return render_template('error.html', error = 'Unauthorized Access')
+
+
+@app.route('/employeeHome')
+def employeeHome():
+    if session.get('user'):
+        if session.get('user').split("@")[-1].lower() == "wds.com": # only employee have access to employee page
+            print("----employee home-----")
+            return render_template('employeeHome.html')
+        else:
+            return redirect('/')
+    else:
+        return redirect('/')
 
 
 """
@@ -375,6 +393,7 @@ def showPay():
 @app.route('/processPay', methods=['POST'])
 def processPay():
     try:
+        invoice_number = request.form['invoice_number']
         pay_method = request.form['pay_method']
         amount = request.form['amount']
 
@@ -442,6 +461,26 @@ def showInvoice():
     else:
         return redirect(url_for('index'))
 
+
+@app.route('/retrieveIns', methods=['POST'])
+def retrieveIns():
+    try:
+        print('-------{}'.format(request.url))
+        print('-------{}'.format(request.form))
+        ins_number = request.form['ins_number']
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        # fetch customer insurance info from mysql
+        cursor.execute(
+            'SELECT * FROM WDS.insurance a JOIN WDS.customer b ON a.cid=b.cid WHERE insid="{}"'.format(str(ins_number)))
+        r = cursor.fetchall()[0]
+        print(str(r))
+
+        return json.dumps({'response':str(r)})
+
+    except Exception as e:
+        return "Please enter a valid insurance number! " + str(e)
 
 # log out current user
 @app.route('/logout')
