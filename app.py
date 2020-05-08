@@ -187,7 +187,7 @@ def userHome():
         if home_ins:
             for ins in home_ins:
                 insurances.append("Home insurances no.{} from {} to {} for ${} for my {} squared feet, ${} home, which is purchased/moved-in on {} .".format(str(ins[0]),str(ins[1].date()),str(ins[2].date()),str(ins[3]),str(ins[8]),str(ins[7]),str(ins[6].date())))
-                
+
         return render_template('userHome.html', user_info = user_info, user_insurance = insurances)
     else:
         return render_template('error.html', error = 'Unauthorized Access')
@@ -477,10 +477,41 @@ def retrieveIns():
         r = cursor.fetchall()[0]
         print(str(r))
 
-        return json.dumps({'response':str(r)})
+        cursor.close()
+        conn.close()
+
+        return json.dumps({'response':str(r), 'ins_number':r[0]})
 
     except Exception as e:
         return "Please enter a valid insurance number! " + str(e)
+
+
+@app.route('/deleteIns', methods=['POST'])
+def deleteIns():
+    if not session.get('user'):
+        return render_template('error.html', error = 'Unauthorized Access')
+    if session.get('user').split("@")[-1].lower() != "wds.com":
+        return render_template('error.html', error = 'Unauthorized Access')
+    try:
+        # print(request.url)
+        # print(request.form)
+        
+        ins_number = request.form['delete_number']
+
+        # conn = mysql.connect()
+        # cursor = conn.cursor()
+        # # delete insurance by ins number from mysql
+        # cursor.execute(
+        #     'DELETE FROM WDS.insurance a JOIN WDS.customer b ON a.cid=b.cid WHERE insid="{}"'.format(str(ins_number)))
+        # r = cursor.fetchall()
+        # print(str(r))
+        #
+        # cursor.close()
+        # conn.close()
+
+        return json.dumps({'response': "Deleting insurance {}".format(ins_number) })
+    except Exception as e:
+        return str(e)
 
 # log out current user
 @app.route('/logout')
