@@ -477,10 +477,28 @@ def retrieveIns():
         r = cursor.fetchall()[0]
         print(str(r))
 
+        number = str(r[0])
+        start = str(r[1].date())
+        end = str(r[2].date())
+        pre = str(r[3])
+        customer = str(r[4])
+        first = r[6]
+        last = r[7]
+        gender = r[8]
+        mari = r[9]
+        type = r[10]
+        house = str(r[11])
+        street = str(r[12])
+        city = str(r[13])
+        state = str(r[14])
+        zip = str(r[15])
+
+        ins = "Number {}, starts on {}, ends on {}, preminum ${}, for customer id {}: {} {}, gender: {}, maritual: {}, address: {} {}, {}, {}, {}".format(number, start, end, pre, customer, first, last, gender, mari, house, street, city, state, zip)
+
         cursor.close()
         conn.close()
 
-        return json.dumps({'response':str(r), 'ins_number':r[0]})
+        return json.dumps({'response':ins, 'ins_number':r[0]})
 
     except Exception as e:
         return "Please enter a valid insurance number! " + str(e)
@@ -495,23 +513,19 @@ def deleteIns():
     try:
         # print(request.url)
         # print(request.form)
-        
+
         ins_number = request.form['delete_number']
 
-        # conn = mysql.connect()
-        # cursor = conn.cursor()
-        # # delete insurance by ins number from mysql
-        # cursor.execute(
-        #     'DELETE FROM WDS.insurance a JOIN WDS.customer b ON a.cid=b.cid WHERE insid="{}"'.format(str(ins_number)))
-        # r = cursor.fetchall()
-        # print(str(r))
-        #
-        # cursor.close()
-        # conn.close()
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        conn.commit()
+        cursor.close()
+        conn.close()
 
         return json.dumps({'response': "Deleting insurance {}".format(ins_number) })
     except Exception as e:
-        return str(e)
+        return "Please enter a valid insurance number! " + str(e)
 
 # log out current user
 @app.route('/logout')
