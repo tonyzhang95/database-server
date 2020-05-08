@@ -10,8 +10,8 @@
 
                 <form class="invoice_form" action="/showPay" method="post">
                     <!-- <div>{{ invoice }}</div> -->
-                <P>Invoice Number: {{ invoice.number }}<br> Invoice Duedate: ${{invoice.duedate}}
-                    <br> Invoice Amount: ${{invoice.amount}} <br> Invoice Outstanding: ${{invoice.outstanding}}
+                <P>Invoice Number: {{ invoice.number }}<br> Invoice Duedate: ${{ invoice.duedate }}
+                    <br> Invoice Amount: ${{ invoice.amount }} <br> Invoice Outstanding: ${{ invoice.outstanding }}
                 </p>
                 <input type="text" class="form-control" name="invoice_number" id="invoice_number" value={{ invoice.number }} hidden>
                 <input type="text" class="form-control" name="invoice_duedate" id="invoice_duedate" value={{ invoice.duedate }} hidden>
@@ -23,7 +23,7 @@
             {% endif %}
 
             {% if invoice.paid == 1 %}
-                <P>Invoice Number: {{ invoice.number }}<br> Invoice Amount: ${{invoice.amount}}
+                <P>Invoice Number: {{ invoice.number }}<br> Invoice Amount: ${{ invoice.amount }}
                 </p>
             {% endif %}
 
