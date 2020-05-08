@@ -399,8 +399,13 @@ def processPay():
 
         payment = ["success", pay_method, amount]
 
-        # SQL INSERT into payment table
-        # SQL UPDATE on invoice table, (paid, outstanding)
+        # SQL INSERT into payment table and UPDATE invoice table
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.callproc('sp_insertPayment',(pay_method, amount, invoice_number))
+        conn.commit()
+        cursor.close()
+        conn.close()
 
         return json.dumps({'response': payment})
     except Exception as e:
@@ -443,14 +448,16 @@ def showInvoice():
                     'select * from wds.invoice where invoice.insid = {}'.format('"' + insid + '"'))
                 i = cursor.fetchone()
                 invoice_info.append(i)
-        print("All info：", invoice_info)
+            print("All info：", invoice_info)
+        else:
+            invoice_info = []
         cursor.close()
         conn.close()
 
         # display insurances info
         invoices = []
         for info in invoice_info:
-            if info[4]:
+            if info[4]>0:
                 pflag = 0
             else:
                 pflag = 1
@@ -493,21 +500,18 @@ def deleteIns():
     if session.get('user').split("@")[-1].lower() != "wds.com":
         return render_template('error.html', error = 'Unauthorized Access')
     try:
-        # print(request.url)
-        # print(request.form)
+        print(request.url)
+        print(request.form)
         
-        ins_number = request.form['delete_number']
+        ins_number = int(request.form['delete_number'])
 
-        # conn = mysql.connect()
-        # cursor = conn.cursor()
-        # # delete insurance by ins number from mysql
-        # cursor.execute(
-        #     'DELETE FROM WDS.insurance a JOIN WDS.customer b ON a.cid=b.cid WHERE insid="{}"'.format(str(ins_number)))
-        # r = cursor.fetchall()
-        # print(str(r))
-        #
-        # cursor.close()
-        # conn.close()
+        # SQL delete insurance, auto_ins/home_ins, invoice and payment
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.callproc('sp_deleteInsurance',(ins_number,))
+        conn.commit()
+        cursor.close()
+        conn.close()
 
         return json.dumps({'response': "Deleting insurance {}".format(ins_number) })
     except Exception as e:
