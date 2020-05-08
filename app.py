@@ -393,11 +393,51 @@ def showInvoice():
     if session.get('user'):
 
         # retrieve user invoices from DB
-        # fake invoice
-        invoice1 = {"number":103, "paid":0, "amount":200, "outstanding":200}
-        invoice2 = {"number":105, "paid":1, "amount":1000, "outstanding":500}
-        invoices = [invoice1, invoice2]
+        cid = 0
+        auto_ins = []
+        home_ins = []
 
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # fetch customer id info from mysql
+        cursor.execute(
+            'select cid from wds.customer c join wds.user u on c.user_id = u.user_id where user_username = {}'.format('"' + str(session.get('user')) + '"'))
+        cid = str(cursor.fetchone()[0])
+        print(cid)
+        # fetch insurances number from mysql
+        if cid:
+            cursor.execute(
+                'select i.insid from wds.insurance i join wds.auto_ins a on i.insid=a.insid where i.cid = {}'.format('"' + cid + '"'))
+            auto_ins = cursor.fetchall()
+            cursor.execute(
+                'select i.insid from wds.insurance i join wds.home_ins h on i.insid=h.insid where i.cid = {}'.format('"' + cid + '"'))
+            home_ins = cursor.fetchall()
+            all_ins = auto_ins + home_ins
+
+        # fetch invoice info from mysql
+        if all_ins:
+            invoice_info = []
+            for ins in all_ins:
+                insid = str(ins[0])
+                cursor.execute(
+                    'select * from wds.invoice where invoice.insid = {}'.format('"' + insid + '"'))
+                i = cursor.fetchone()
+                invoice_info.append(i)
+        print("All info：", invoice_info)
+        cursor.close()
+        conn.close()
+
+        # display insurances info
+        invoices = []
+        for info in invoice_info:
+            if info[4]:
+                pflag = 0
+            else:
+                pflag = 1
+            invoices.append({"number":info[0], "paid":pflag, "duedate":info[2], "amount":info[3], "outstanding":info[4]})
+
+        print("invoices:", invoices)
         return render_template('invoice.html', invoices = invoices)
     else:
         return redirect(url_for('index'))

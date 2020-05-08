@@ -10,10 +10,13 @@
 
                 <form class="invoice_form" action="/showPay" method="post">
                     <!-- <div>{{ invoice }}</div> -->
-                <P>Invoice Number: {{ invoice.number }}<br> Invoice Amount: ${{invoice.amount}}
+                <P>Invoice Number: {{ invoice.number }}<br> Invoice Duedate: ${{invoice.duedate}}
+                    <br> Invoice Amount: ${{invoice.amount}} <br> Invoice Outstanding: ${{invoice.outstanding}}
                 </p>
                 <input type="text" class="form-control" name="invoice_number" id="invoice_number" value={{ invoice.number }} hidden>
+                <input type="text" class="form-control" name="invoice_duedate" id="invoice_duedate" value={{ invoice.duedate }} hidden>
                 <input type="text" class="form-control" name="invoice_amount" id="invoice_amount" value={{ invoice.amount }} hidden>
+                <input type="text" class="form-control" name="invoice_outstanding" id="invoice_outstanding" value={{ invoice.outstanding }} hidden>
 
                 <button id="btnInoivce" class="btn btn-sm btn-primary" type="submit">Pay for this invoice</button>
             </form>
