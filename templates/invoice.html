@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block page_title %} We Do Secure Insurance {% endblock %}
+
+{% block content %}
+    <p> Your Invoices</p>
+
+    {% for invoice in invoices %}
+        <p>
+            {% if invoice.paid == 0 %}
+
+                <form class="invoice_form" action="/showPay" method="post">
+                    <!-- <div>{{ invoice }}</div> -->
+                <P>Invoice Number: {{ invoice.number }}<br> Invoice Amount: ${{invoice.amount}}
+                </p>
+                <input type="text" class="form-control" name="invoice_number" id="invoice_number" value={{ invoice.number }} hidden>
+                <input type="text" class="form-control" name="invoice_amount" id="invoice_amount" value={{ invoice.amount }} hidden>
+
+                <button id="btnInoivce" class="btn btn-sm btn-primary" type="submit">Pay for this invoice</button>
+            </form>
+            {% endif %}
+
+            {% if invoice.paid == 1 %}
+                <P>Invoice Number: {{ invoice.number }}<br> Invoice Amount: ${{invoice.amount}}
+                </p>
+            {% endif %}
+
+        </p>
+    {% endfor %}
+
+    <p> <a href="/">Return </a> to my home page.</p>
+
+
+{% endblock %}

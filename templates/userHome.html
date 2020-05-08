@@ -8,12 +8,19 @@
 
     <p> <a href="/product">Browse</a> and buy insurances.</p>
 
-    <p> <a href="/userInfo">Update</a> my information.</p>
 
-    <p> My account information: <br> {{ user_info }} </p>
 
-    <p> My current insurances: {{ user_insurance }} </p>
+    <p> My information: <br> {{ user_info }} </p>
+    <p> Wrong? <a href="/userInfo"> Update </a> my information.</p>
 
+    <p> My insurances: </p>
+    {% for ins in user_insurance %}
+        <p> {{ ins }} </p>
+    {% endfor %}
+    <p> Wrong? Ask WDS staff to edit your insurance records. </p>
+    <p>
+        <a href="/showInvoice">Retrieve</a> invoices and pay for my invoices.
+    </p>
 
 
     <p> You can <a href="/logout">log out</a> from here. </p>

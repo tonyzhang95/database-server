@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block page_title %}We Do Secure Insurance {% endblock %}
+
+{% block content %}
+    <body>
+        <h1 class="h3 mb-3 font-weight-normal">Please complete your payment for invoice {{ invoice_number }} of ${{ invoice_amount }}</h1>
+
+        <form id="ins_pay_form">
+
+
+
+            <div>
+                <label for="pay_method">Mayment Method</label>
+                <select class="form-control" name="pay_method" id="pay_method">
+                  <option value="paypal">PayPal</option>
+                  <option value="credit">Credit Card</option>
+                  <option value="debit">Debit Card</option>
+                  <option value="check">Check</option>
+                </select>
+            </div><br>
+
+            <div>Payment Amount
+              <input type="number" class="form-control" name="amount" id="amount"><br>
+            </div>
+
+            <p>Cardholder</p>
+            <div class="row">
+                <div class="col">First Name
+                  <input type="text" class="form-control" name="firstname" id="firstname">
+                </div>
+                <div class="col">Last Name
+                  <input type="text" class="form-control" name="lastname" id="lastname">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">Card Number
+                  <input type="text" class="form-control" name="card_number" id="card_number">
+                </div>
+                <div class="col">Security Code CVV
+                  <input type="text" class="form-control" name="cvv" id="cvv">
+                </div>
+            </div><br>
+
+
+            <button id="btnPay" class="btn btn-lg btn-primary btn-block" type="button">Pay</button>
+
+
+            <h1><div id="result"></div></h1>
+
+        </form>
+
+    </body>
+
+{% endblock %}

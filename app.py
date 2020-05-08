@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, json, redirect, session, url_for
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -10,10 +11,11 @@ app.secret_key = 'simple-server-database'
 
 # MySQL config
 app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = 'Supern0va'
+app.config['MYSQL_DATABASE_PASSWORD'] = '2020DB!!'
 app.config['MYSQL_DATABASE_DB'] = 'WDS'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
+print("-----Established Database Connection-----")
 
 
 @app.route('/')
@@ -32,6 +34,9 @@ def showSignIn():
 @app.route('/validateLogIn', methods=['POST'])
 def validateLogIn():
     try:
+        print(request.url)
+        print(request.form)
+
         _username = request.form['inputEmail']
         _password = request.form['inputPassword']
 
@@ -147,26 +152,43 @@ def userHome():
         if len(account[0]) < 10:
             user_account = "Username: " + str(account[0][1]) + "\n" + "Accunt/Email: " + str(account[0][2])
         else:
-            user_account = "Username: " + str(account[0][1]) + "\n" + "Accunt/Email: " + str(account[0][2]) + "\n" + "Name: " + str(account[0][5]) + " " + str(account[0][6]) + "\n" + "Gender: " + str(account[0][7]) + "\n" + "Maritality: " + str(account[0][8]) + "\n" + "Insurance type: " + str(account[0][9]) + "\n"+ "Address: " + str(account[0][10]) + ", " + str(account[0][11]) + ", " + str(account[0][12]) + ", " + str(account[0][13]) + ", " + str(account[0][14])
+            name = str(account[0][5]) + " " + str(account[0][6])
+            if str(account[0][7])=='M':
+                gender = "Male"
+            elif str(account[0][7])=="Female":
+                gender = "Female"
+            else:
+                gender = "Non-binary"
+
+            if str(account[0][8]) == 'S':
+                mari = 'Single'
+            elif str(account[0][8]) == 'M':
+                mari = 'Married'
+            else:
+                mari = 'Widow'
+
+            address = " ".join([str(account[0][10]),str(account[0][11]),str(account[0][12]),str(account[0][13]),str(account[0][14])])
+
+            user_info = ", ".join([name, gender, mari, address])
+
 
         # display insurances info
-        insurances = ""
+        insurances = []
         if auto_ins:
-            for i in auto_ins:
-                insurances += "Auto insurances info: " + str(i) + "\n"
+            ins = auto_ins[0]
+            insurances.append("Car insurance no." + str(ins[0]) + " from " + str(ins[1].date()) + " to " + str(ins[2].date()) + " for $" + str(ins[3]) + ", for my " + str(ins[9]) + " " + str(ins[7]) + " " + str(ins[8]) + ", with primary driver: " + str(ins[11]) +" "+ str(ins[12]) + " with driver's lisence numbdered " + str(ins[13]) + " born on " + str(ins[14].date()))
+
         if home_ins:
-            for j in home_ins:
-                insurances += "Home insurances info: " + str(j) + "\n"
-        return render_template('userHome.html', user_info = user_account, user_insurance = insurances)
+            ins = home_ins[0]
+            print(ins)
+            insurances.append("Home insurances no.{} from {} to {} for ${} for my {} squared feet, ${} home, which is purchased/moved-in on {} .".format(str(ins[0]),str(ins[1].date()),str(ins[2].date()),str(ins[3]),str(ins[8]),str(ins[7]),str(ins[6].date())))
+        return render_template('userHome.html', user_info = user_info, user_insurance = insurances)
     else:
         return render_template('error.html', error = 'Unauthorized Access')
 
 
 """
 Process submitted user info form.
-Pass in parameters with RESTful query POST request.
-For example:
-http://0.0.0.0:5000/processUserInfo?firstname=david&lastname=beckham&gender=M&maritality=S&instype=A&house=500&street=Man St&city=manchester&state=NY&zipcode=10003
 """
 @app.route('/processUserInfo', methods = ['POST'])
 def processUserInfo():
@@ -335,6 +357,50 @@ def processHomeIns():
         print(str(e))
         return str(e)
 
+
+@app.route('/showPay', methods=['POST'])
+def showPay():
+    if session.get('user'):
+        print("url:", request.url)
+        print("form:", request.form)
+
+        number = request.form['invoice_number']
+        amount = request.form['invoice_amount']
+
+        return render_template('pay.html', invoice_number = number, invoice_amount = amount)
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/processPay', methods=['POST'])
+def processPay():
+    try:
+        pay_method = request.form['pay_method']
+        amount = request.form['amount']
+
+        payment = ["success", pay_method, amount]
+
+        # SQL INSERT into payment table
+        # SQL UPDATE on invoice table, (paid, outstanding)
+
+        return json.dumps({'response': payment})
+    except Exception as e:
+        return str(e)
+
+
+@app.route('/showInvoice')
+def showInvoice():
+    if session.get('user'):
+
+        # retrieve user invoices from DB
+        # fake invoice
+        invoice1 = {"number":103, "paid":0, "amount":200, "outstanding":200}
+        invoice2 = {"number":105, "paid":1, "amount":1000, "outstanding":500}
+        invoices = [invoice1, invoice2]
+
+        return render_template('invoice.html', invoices = invoices)
+    else:
+        return redirect(url_for('index'))
 
 
 # log out current user
