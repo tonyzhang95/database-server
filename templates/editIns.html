@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block page_title %}We Do Secure Insurance {% endblock %}
+
+{% block content %}
+    <body>
+        <h1 class="h3 mb-3 font-weight-normal">Please modify an insurance</h1>
+
+        <form id="edit_ins_form">
+
+            <p>
+                <label for="ins_num">Insurance Number</label>
+                <input type="number" class="form-control" name="ins_num" id="ins_num" placeholder="insurance number">
+            </p>
+
+            <div class="row">
+                <div class="col">Insurance Start Date
+                  <input type="date" class="form-control" name="insStartDate" id="insStartDate" placeholder="MM-DD-YYYY">
+                </div>
+                <div class="col">End Date
+                  <input type="date" class="form-control" name="insEndDate" id="insEndDate" placeholder="MM-DD-YYYY">
+                </div>
+            </div>
+
+            <p>
+                <label for="ins_premium">Premium Amount per year</label>
+                <input type="number" class="form-control" name="ins_premium" id="ins_premium">
+            </p>
+
+            <div>
+                <button id="btnEditInsSubmit" class="btn btn-lg btn-primary btn-block" type="button">Modify</button>
+            </div>
+
+            <h1><div id="result"></div></h1>
+
+        </form>
+
+    </body>
+
+{% endblock %}

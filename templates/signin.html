@@ -4,16 +4,16 @@
 
 {% block content %}
     <body class="text-center">
-        <h1 class="h3 mb-3 font-weight-normal">Please Log In</h1>
+        <h1 class="h3 mb-3 font-weight-normal">Please Sign In</h1>
 
         <form class="form-signin" action="/validateLogIn" method="post">
-            <label for="inputEmail" class="sr-only">Email address</label>
-            <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+            <p>Email Address:<label for="inputEmail" class="sr-only">Email address</label>
+            <input type="email" name="inputEmail" id="inputEmail" class="form-control" placeholder="Email address" required autofocus></p>
 
-            <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required>
+            <p>Password:<label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" name="inputPassword" id="inputPassword" class="form-control" placeholder="Password" required></p>
 
-            <button id="btnSignIn" class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            <button id="btnSignIn" class="btn btn-lg btn-primary btn-block" type="submit">Sign In</button>
         </form>
 
     </body>

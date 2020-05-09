@@ -3,9 +3,33 @@
 
 {% block content %}
     <p>Documentation of this website as a project.</p>
-    <P>To set Flask server in development envrionment, enter <code>export FLASK_ENV=development</code> in terminal.
-    </P>
-    <p>Created a Database in MySQL called WDS, and created a table called user to store and retrive user log-in information. Connect MySQL to flask using <code>flask-mysql</code> and credentials specific in the app.py file when initializing app. 
-    </p>
+    <p><a href="https://docs.google.com/document/d/1l0cSHLVFTWvqVbW75xMfbZjGgNwwyN4muTXQ7xb49AI/edit?usp=sharing" target="_blank">View</a> the whole documentation and report on Google Drive.</p>
+
+    <h4>Features</h4>
+    <p>1. Log-in/Sign-up/Log-out.</p>
+    <p>We implemented log-in/sign-up/log-out features with our website. Upon entering the index page of our app, you are promoted to log-in or sign-up to use our web. If you are a new user, then by clicking sign-up, you are taken to the sign-up page where you will enter your log-in information (name, email, password) and upon successful sign-up you will be taken to the User Info Page, where you will fill out your information as a customer, and then to User Home Page, which we will discuss in detail later. If you are a WDS employee, upon sign-up or log-in you will be taken to the employee home page. Employee and customer is determined by the host name of their email address: employee uses email ends with wds.com, while customer uses other email hosts, such as gmail.com or nyu.edu.Sign-up/log-in are managed with session within Flask, where it will remember the user who is currently logged-in, and track them between web pages.</p>
+
+    <p>2. Security: </p>
+    <p>All passwords are encrypted for security concerns. Upon entering the password, our server creates a SHA256 encryption of the password which is stored in the database. When logging-in, we compare SHA256 encryption stored in the database and the SHA256 hashed password entered, thus no plaintext password is ever used in our system.We also used stored procedures to prevent SQL injection where the attacker enters illegal characters to gain access to the SQL and server system. The server calls a stored procedure in MySQL when inserting information from users, thus safeguarding our application from SQL injection.</p>
+
+    <p>3. Purchase of Insurances</p>
+    <p>We developed a product display page to display two types of insurance that we are selling. Auto insurance for cars, and home insurance for homes. Users can browse the product page without log-in or sign-up. If they are to buy a certain insurance, they will need to log-in or sign-up. Once they are logged-in, they can buy the insurance by entering information regarding their car/home. We also use stored procedures to prevent SQL injection.</p>
+
+    <p>4. Customer Information</p>
+    <p>Upon logging-in to the customer account, the customer can see his/her information in the user home page. He/she then will be able edit their personal information (name, address, marital status…).</p>
+
+    <p>5. Invoice and Payment</p>
+    <p>Upon a successful purchase, an invoice is automatically generated for this purchase, and it will be displayed to the user. The user could pay for the amount due immediately or at a later time from their User Home Page.</p>
+
+    <p>6. Editing and Deletion of Insurances</p>
+    <p>Editing and deletion of insurances are only open to WDS employees. Remember when the user logs-in, our app checks if the user is a WDS employee by checking its email host name. With the WDS employee privileges, the user can access the Employee Home Page, where they will be able to pull insurance for a specific customer, edit a certain insurance, or delete a insurance. Customers logged-in with non-WDS email host names will be redirected to the home page.</p>
+
+    <h4>Emplementation Details</h4>
+    <p>To set Flask server in development envrionment, enter <code>export FLASK_ENV=development</code> in terminal.</p>
+
+    <h4>Development Envrionment</h4>
+    <div class="">
+        Database is MySQL 8.0 with MySQL workbench. Server is written in python with Flask. Front-end uses JavaScript, HTML, CSS. API calls and web events are handled with jQuery ajax. Version control is done with Git and the code is hosted on Github.
+    </div>
 
 {% endblock %}

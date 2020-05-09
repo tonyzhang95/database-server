@@ -55,3 +55,22 @@ $(function() {
         })
     });
 });
+
+
+$(function() {
+    $('#btnEditInsSubmit').click(function() {
+        $.ajax({
+            url: '/processEdit?' + $('#edit_ins_form').serialize(),
+            data: $('#edit_ins_form').serialize(),
+            type: 'POST',
+            dataType: 'json',
+            success: function (result, status, xhr) {
+                console.log(result);
+                $("#result").html(result.response)
+                },
+            error: function (xhr, status, error) {
+                $("#result").html(xhr.responseText)
+                }
+        })
+    });
+});
