@@ -470,11 +470,6 @@ def showInvoice():
 def showPayment():
     if session.get('user'):
 
-        # retrieve user payment from DB
-        cid = 0
-        auto_ins = []
-        home_ins = []
-
         conn = mysql.connect()
         cursor = conn.cursor()
 
@@ -484,7 +479,7 @@ def showPayment():
                 '"' + str(session.get('user')) + '"'))
         cid = str(cursor.fetchone()[0])
         print(cid)
-        # fetch insurances number from mysql
+        # fetch payments details from mysql
         if cid:
             cursor.execute(
                 'select n.invno from invoice n join insurance i on n.insid = i.insid where i.cid = {}'.format(
@@ -505,7 +500,7 @@ def showPayment():
         cursor.close()
         conn.close()
 
-        # display insurances info
+        # display payments info
         showpay = []
         for pay_of_one_invoice in payments:
             for pay in pay_of_one_invoice:
