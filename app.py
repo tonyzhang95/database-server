@@ -182,11 +182,11 @@ def userHome():
         insurances = []
         if auto_ins:
             for ins in auto_ins:
-                insurances.append("Car insurance no." + str(ins[0]) + " from " + str(ins[1].date()) + " to " + str(ins[2].date()) + " for $" + str(ins[3]) + ", for my " + str(ins[9]) + " " + str(ins[7]) + " " + str(ins[8]) + ", with primary driver: " + str(ins[11]) +" "+ str(ins[12]) + " with driver's lisence numbdered " + str(ins[13]) + " born on " + str(ins[14].date()))
+                insurances.append("Car insurance no." + str(ins[0]) + " from " + str(ins[1].date()) + " to " + str(ins[2].date()) + " for $" + str(ins[3]) + "/year for my " + str(ins[9]) + " " + str(ins[7]) + " " + str(ins[8]) + ", with primary driver: " + str(ins[11]) +" "+ str(ins[12]) + " with driver's lisence numbdered " + str(ins[13]) + " born on " + str(ins[14].date()))
 
         if home_ins:
             for ins in home_ins:
-                insurances.append("Home insurances no.{} from {} to {} for ${} for my {} squared feet, ${} home, which is purchased/moved-in on {} .".format(str(ins[0]),str(ins[1].date()),str(ins[2].date()),str(ins[3]),str(ins[8]),str(ins[7]),str(ins[6].date())))
+                insurances.append("Home insurances no.{} from {} to {} for ${}/year for my {} squared feet, ${} home, which is purchased/moved-in on {} .".format(str(ins[0]),str(ins[1].date()),str(ins[2].date()),str(ins[3]),str(ins[8]),str(ins[7]),str(ins[6].date())))
 
         return render_template('userHome.html', user_info = user_info, user_insurance = insurances)
     else:
@@ -297,13 +297,8 @@ def processCarIns():
         # session user
         username = session['user']
 
-        car_ins = [start, end, premium, vin, make, model, year, firstname, lastname, lisence, birthdate]
-        print(car_ins)
-
 
         if start and end and premium and vin and make and model and year and ownership and firstname and lastname and lisence and birthdate: # check all fields filled
-
-            # check dates
 
             # MySQL ops
             conn = mysql.connect()
@@ -312,7 +307,10 @@ def processCarIns():
             conn.commit()
             cursor.close()
             conn.close()
-            return json.dumps({'response': "success {}".format(car_ins)})
+
+            car_ins = "You have successfully purchased a insurance for ${}/year for your {} {} {} with VIN {} starting {} and ending {}. The driver is {} {} with DL no.{} born on {}.".format(premium, year, make, model, vin, start, end, firstname, lastname, lisence, birthdate)
+
+            return json.dumps({'response': "{}".format(car_ins)})
         else:
             return "Error: must fill all fields."
     except Exception as e:
@@ -354,9 +352,6 @@ def processHomeIns():
         # session user
         username = session['user']
 
-        home_ins = [start, end, premium, date, value, area, home_type, fire, security, pool, basement]
-        print(home_ins)
-
         if start and end and premium and date and value and area and home_type and fire and security and pool and basement: # check all fields filled
 
             # check dates
@@ -368,7 +363,10 @@ def processHomeIns():
             conn.commit()
             cursor.close()
             conn.close()
-            return json.dumps({'response': "success {}".format(home_ins)})
+
+            home_ins = "You have successfully purchased an insurance of ${}/year for your ${}, {} square feet home starting {} and ending {}.".format(premium, value, area, start, end)
+
+            return json.dumps({'response': "{}".format(home_ins)})
         else:
             return "Error: must fill all fields."
     except Exception as e:
@@ -508,7 +506,7 @@ def retrieveIns():
         return json.dumps({'response':ins, 'ins_number':r[0]})
 
     except Exception as e:
-        return "Please enter a valid insurance number! " + str(e)
+        return "Please enter a valid insurance number! "
 
 
 @app.route('/deleteIns', methods=['POST'])
@@ -517,7 +515,7 @@ def deleteIns():
         return render_template('error.html', error = 'Unauthorized Access')
     if session.get('user').split("@")[-1].lower() != "wds.com":
         return render_template('error.html', error = 'Unauthorized Access')
-    try:       
+    try:
         ins_number = int(request.form['delete_number'])
 
         # SQL delete insurance, auto_ins/home_ins, invoice and payment
@@ -528,9 +526,43 @@ def deleteIns():
         cursor.close()
         conn.close()
 
-        return json.dumps({'response': "Deleting insurance {}".format(ins_number) })
+        return json.dumps({'response': "Deleted insurance {}".format(ins_number) })
     except Exception as e:
-        return "Please enter a valid insurance number! " + str(e)
+        return "Please enter a valid insurance number! "
+
+
+@app.route('/editIns')
+def editIns():
+    if not session.get('user'):
+        return render_template('error.html', error = 'Unauthorized Access')
+    if session.get('user').split("@")[-1].lower() != "wds.com":
+        return render_template('error.html', error = 'Unauthorized Access')
+    try:
+        return render_template('editIns.html')
+    except Exception as e:
+        return redirect('/')
+
+
+@app.route('/processEdit', methods=['POST'])
+def processEdit():
+    try:
+        print(request.url)
+        print(request.form)
+
+        number = request.form['ins_num']
+        start = request.form['insStartDate']
+        end = request.form['insEndDate']
+        premium = request.form['ins_premium']
+
+        res = ", ".join([number, start, end, premium])
+
+        # SQL
+
+        return res
+    except Exception as e:
+        return str(e)
+
+
 
 # log out current user
 @app.route('/logout')
@@ -538,11 +570,6 @@ def logout():
     session.pop('user', None)
     return redirect('/')
 
-
-# temporary page for todos
-@app.route('/todos')
-def todo():
-    return render_template('todos.html')
 
 
 # documentation page for this project

@@ -2,11 +2,12 @@
 {% block page_title %} We Do Secure Insurance {% endblock %}
 
 {% block content %}
+
     <p> Welcome to employee homepage!</p>
 
     <p> Currently signed in as: {{ session.user }} </p>
 
-    <p> You can retrieve customer insurances and make changes to them.</p>
+    <p> Use the form below to retrieve customer insurances or <a href="/editIns">edit</a> a specific insurance.</p>
 
     <form id="ins_retrieve_form">
         <div class="row">
