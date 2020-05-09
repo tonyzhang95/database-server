@@ -161,10 +161,10 @@ def userHome():
             name = str(account[0][5]) + " " + str(account[0][6])
             if str(account[0][7])=='M':
                 gender = "Male"
-            elif str(account[0][7])=="Female":
+            elif str(account[0][7])=="F":
                 gender = "Female"
             else:
-                gender = "Non-binary"
+                gender = "Not to provide"
 
             if str(account[0][8]) == 'S':
                 mari = 'Single'
@@ -466,6 +466,56 @@ def showInvoice():
     else:
         return redirect(url_for('index'))
 
+@app.route('/showPay')
+def showPayment():
+    if session.get('user'):
+
+        # retrieve user payment from DB
+        cid = 0
+        auto_ins = []
+        home_ins = []
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # fetch customer id info from mysql
+        cursor.execute(
+            'select cid from wds.customer c join wds.user u on c.user_id = u.user_id where user_username = {}'.format(
+                '"' + str(session.get('user')) + '"'))
+        cid = str(cursor.fetchone()[0])
+        print(cid)
+        # fetch insurances number from mysql
+        if cid:
+            cursor.execute(
+                'select n.invno from invoice n join insurance i on n.insid = i.insid where i.cid = {}'.format(
+                    '"' + cid + '"'))
+            invoices = cursor.fetchall()
+        print(invoices)
+        if invoices:
+            payments = []
+            for inv in invoices:
+                invno = str(inv[0])
+                cursor.execute(
+                    'select * from payment where invno={}'.format('"' + invno + '"'))
+                i = cursor.fetchall()
+                payments.append(i)
+            print("All info：", payments)
+        else:
+            payments = []
+        cursor.close()
+        conn.close()
+
+        # display insurances info
+        showpay = []
+        for pay_of_one_invoice in payments:
+            for pay in pay_of_one_invoice:
+                showpay.append(
+                    {"number": pay[0], "date": pay[1], "method": pay[2], "amount": pay[3], "invno": pay[4]})
+
+        print("showpay:", showpay)
+        return render_template('showPay.html', showpay=showpay)
+    else:
+        return redirect(url_for('index'))
 
 @app.route('/retrieveIns', methods=['POST'])
 def retrieveIns():
@@ -473,40 +523,50 @@ def retrieveIns():
         print('-------{}'.format(request.url))
         print('-------{}'.format(request.form))
         ins_number = request.form['ins_number']
+        print("OK")
 
         conn = mysql.connect()
         cursor = conn.cursor()
         # fetch customer insurance info from mysql
         cursor.execute(
-            'SELECT * FROM WDS.insurance a JOIN WDS.customer b ON a.cid=b.cid WHERE insid="{}"'.format(str(ins_number)))
-        r = cursor.fetchall()[0]
-        print(str(r))
+            'SELECT * FROM WDS.insurance a JOIN WDS.customer b ON a.cid=b.cid JOIN WDS.invoice n ON n.insid=a.insid WHERE a.insid="{}"'.format(str(ins_number)))
+        ins = cursor.fetchall()[0]
+        print(str(ins))
 
-        number = str(r[0])
-        start = str(r[1].date())
-        end = str(r[2].date())
-        pre = str(r[3])
-        customer = str(r[4])
-        first = r[6]
-        last = r[7]
-        gender = r[8]
-        mari = r[9]
-        type = r[10]
-        house = str(r[11])
-        street = str(r[12])
-        city = str(r[13])
-        state = str(r[14])
-        zip = str(r[15])
+        number = str(ins[0])
+        start = str(ins[1].date())
+        end = str(ins[2].date())
+        pre = str(ins[3])
+        customer = str(ins[4])
+        first = ins[6]
+        last = ins[7]
+        gender = ins[8]
+        mari = ins[9]
+        type = ins[10]
+        house = str(ins[11])
+        street = str(ins[12])
+        city = str(ins[13])
+        state = str(ins[14])
+        zip = str(ins[15])
+        invno = str(ins[17])
+        invdate = str(ins[18].date())
+        duedate = str(ins[19].date())
+        amount = str(ins[20])
+        outstanding = str(ins[21])
 
-        ins = "Number {}, starts on {}, ends on {}, preminum ${}, for customer id {}: {} {}, gender: {}, maritual: {}, address: {} {}, {}, {}, {}".format(number, start, end, pre, customer, first, last, gender, mari, house, street, city, state, zip)
+        insre = "Insurance number {}, starts on {}, ends on {}, preminum ${}, for customer id {}: {} {}, gender: {}, maritual: {}, " \
+                "address: {} {}, {}, {}, {}.  Corresponding invoice number {}, issued on {}, due on {}, total amount ${}, outstanding ${}"\
+            .format(number, start, end, pre, customer, first, last, gender, mari, house, street, city, state, zip,
+                    invno, invdate, duedate, amount, outstanding)
 
         cursor.close()
         conn.close()
 
-        return json.dumps({'response':ins, 'ins_number':r[0]})
+        return json.dumps({'response':insre, 'ins_number':ins[0]})
 
     except Exception as e:
-        return "Please enter a valid insurance number! "
+        #return "Please enter a valid insurance number! "
+        return e
 
 
 @app.route('/deleteIns', methods=['POST'])
@@ -555,8 +615,16 @@ def processEdit():
         premium = request.form['ins_premium']
 
         res = ", ".join([number, start, end, premium])
+        print(res)
 
-        # SQL
+        # SQL update insurance and invoice tables
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.callproc('sp_editInsurance',(number, start, end, premium))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
 
         return res
     except Exception as e:
