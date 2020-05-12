@@ -18,6 +18,16 @@ mysql.init_app(app)
 print("-----Established Database Connection-----")
 
 
+# could use this sanitize function to clean user input if not using stored procedures.
+def sanitize(string):
+    sanitized = str(string)
+    bad_strings = [';','$','&&','../','<','>','"','%3E','\'','--','1,2','\x00','`','(',')','file://','input://']
+    for bad_str in bad_strings:
+        if bad_str in sanitized:
+            sanitized = sanitized.replace(bad_str, '')
+    return sanitized
+
+
 @app.route('/')
 def index():
     if session.get('user'):
