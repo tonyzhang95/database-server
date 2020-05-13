@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, json, redirect, session, url_for, jsonify
 from flaskext.mysql import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
+import html
 
 
 app = Flask(__name__)
@@ -14,9 +15,10 @@ app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = '2020DB!!'
 app.config['MYSQL_DATABASE_DB'] = 'WDS'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mysql.init_app(app)
-print("-----Established Database Connection-----")
 
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
+mysql.init_app(app)
+print("-----Initializing App-----")
 
 # could use this sanitize function to clean user input if not using stored procedures.
 def sanitize(string):
@@ -62,6 +64,7 @@ def validateLogIn():
         if len(data) > 0:
             print(str(data[0]))
             if check_password_hash(str(data[0][3]),_password):
+                session.permanent = True
                 session['user'] = data[0][2] # log user into session
                 if session.get('user').split("@")[1].lower() == "wds.com": # redirect user and employee to their home page
                     return redirect('/employeeHome')
@@ -128,7 +131,9 @@ def signUp():
 
 @app.route('/userHome')
 def userHome():
-    if session.get('user').split("@")[1].lower() != "wds.com":
+    if session.get('user'):
+        if session.get('user').split("@")[1].lower() == "wds.com":
+            redirect('/')
 
         print("user: ", session.get('user'))
 
